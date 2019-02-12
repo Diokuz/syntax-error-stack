@@ -42,6 +42,6 @@ Bad require chain #1
 
 You can have a huge dependency tree, and only one bad file. It is important to extract not only filename, but full require chain.
 
-`syntax-error-stack` uses non-stable API `Module._compile` and `Module._extensions` – same is used in `require-hook` module. So, each js-file require is actually wrapped with custom function, which, in case of compile problems, stores errors and full require chains for log.
+`syntax-error-stack` uses non-stable API `Module._compile` and `Module._extensions` – same is used in `require-hacker` module. So, each js-file require is actually wrapped with custom function, which, in case of compile problems, stores errors and full require chains for log.
 
 See `/index.js` for details – it is not too big/hard to read and understand.
