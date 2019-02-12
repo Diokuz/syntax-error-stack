@@ -1,0 +1,14 @@
+.cache
+node_modules/
+.idea
+.vscode
+npm-debug.log*
+.DS_Store
+*.sublime*
+*.log
+/lib
+/public
+__diff_output__
+yarn-error.log
+stand-app/build
+/website/i18n/en.json
