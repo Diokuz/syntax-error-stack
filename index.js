@@ -1,17 +1,19 @@
 const fs = require('fs')
+const path = require('path')
 const Module = require('module')
 const chalk = require('chalk')
 
 let singleton = false
 let errors = []
 
-const hook = () => {
+const hook = ({ exclude = [] }) => {
   if (singleton === true) {
     throw new Error(`You could use ses only one time - in the root file`)
   }
 
   singleton = true
   let i = 1
+  const excludeSet = new Set(exclude.map(f => path.resolve(f)))
 
   Module._extensions['.js'] = (module, filename) => {
     const stack = ['']
@@ -25,7 +27,9 @@ const hook = () => {
     const source = fs.readFileSync(filename, 'utf8')
 
     try {
-      module._compile(source, filename)
+      if (!excludeSet.has(filename)) {
+        module._compile(source, filename)
+      }
     } catch (e) {
       // Only first three lines, we dont need stacktrace with `cjs/loader.js:721:30`-like filenames
       const originErr = e.stack.split('\n').slice(0, 3).join('\n')
@@ -43,8 +47,8 @@ const hook = () => {
 
 hook.errors = () => errors
 
-module.exports = (absPath) => {
-  hook()
+module.exports = (absPath, options = {}) => {
+  hook(options)
 
   require(absPath)
 
