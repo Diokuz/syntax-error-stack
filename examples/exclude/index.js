@@ -1,8 +1,8 @@
 const ses = require('../../')
 
 ses(
-  require.resolve('./excluded'),
+  require.resolve('./entry'),
   {
-    exclude: ['./examples/exclude/excluded.js']
+    exclude: ['**/examples/exclude/x-*']
   }
 )

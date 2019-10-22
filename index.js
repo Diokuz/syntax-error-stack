@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const Module = require('module')
 const chalk = require('chalk')
+const minimatch = require('minimatch')
 
 let singleton = false
 let errors = []
@@ -13,7 +14,7 @@ const hook = ({ exclude = [] }) => {
 
   singleton = true
   let i = 1
-  const excludeSet = new Set(exclude.map(f => path.resolve(f)))
+  const absExclude = exclude.map(e => path.join(process.cwd(), e))
 
   Module._extensions['.js'] = (module, filename) => {
     const stack = ['']
@@ -24,10 +25,12 @@ const hook = ({ exclude = [] }) => {
       parent = parent.parent
     }
 
-    const source = fs.readFileSync(filename, 'utf8')
+    const realAbsPath = fs.realpathSync(path.resolve(filename))
+    const source = fs.readFileSync(realAbsPath, 'utf8')
+    const isExcluded = absExclude.find(ex => minimatch(realAbsPath, ex))
 
     try {
-      if (!excludeSet.has(filename)) {
+      if (!isExcluded) {
         module._compile(source, filename)
       }
     } catch (e) {
