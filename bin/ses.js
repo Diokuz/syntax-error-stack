@@ -11,6 +11,11 @@ Module._extensions['.tsx'] = noop
 Module._extensions['.jsx'] = noop
 Module._extensions['.css'] = noop
 
-ses(require.resolve(path.resolve(process.cwd(), process.argv[2])), {
+const arg = process.argv[2]
+let entry = arg.startsWith('./')
+  ? require.resolve(path.resolve(process.cwd(), arg))
+  : require.resolve(arg)
+
+ses(entry, {
   verbose: true,
 })
